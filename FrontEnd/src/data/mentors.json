@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "name": "Dr. Anil Sharma",
+    "skills": ["Career Guidance", "Soft Skills"],
+    "language": "Hindi"
+  },
+  {
+    "id": 2,
+    "name": "Maria Gonzalez",
+    "skills": ["Coding", "Web Development"],
+    "language": "Spanish"
+  },
+  {
+    "id": 3,
+    "name": "Emma Brown",
+    "skills": ["AI Basics", "Data Analysis"],
+    "language": "English"
+  }
+]
