@@ -15,6 +15,8 @@ import progressRoutes from "./routes/progressRoute.js";
 const server = http.createServer(app);
 
 
+import { setupSocket } from "./socket/socket.js";
+
 
 
 
