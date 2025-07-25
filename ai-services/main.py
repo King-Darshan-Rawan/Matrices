@@ -51,11 +51,11 @@ collection3 = db.Try3
 
 
 class ChatMessage(BaseModel):
-    sender: str
-    receiver: str
-    msg: str
-    sender_lang: str
-    receiver_lang: str
+    # sender: str
+    # receiver: str
+    text: str
+    source_lang: str
+    target_lang: str
 
 
 
@@ -71,21 +71,21 @@ def read_root():
 async def send_message(data: ChatMessage):
     try:
         translated_text = translate_message(
-        text=data.msg,
-        from_lang=data.sender_lang,
-        to_lang=data.receiver_lang
+        text=data.text,
+        from_lang=data.source_lang,
+        to_lang=data.target_lang
        )
 
         chat = {
-        "sender": data.sender,
-        "receiver": data.receiver,
-        "original_message": data.msg,
-        "translated_message": translated_text,
-        "sender_lang": data.sender_lang,
-        "receiver_lang": data.receiver_lang
+        # "sender": data.sender,
+        # "receiver": data.receiver,
+        "text": data.text,
+        "translatedText": translated_text,
+        "source_lang": data.source_lang,
+        "target_lang": data.target_lang
         }
 
-        await collection2.insert_one(chat)
+        # await collection2.insert_one(chat)
         return {"translated_message": translated_text}
     except Exception as e:
         return {"error": str(e)}
@@ -114,6 +114,7 @@ async def send_message(data: ChatMessage):
 #     except Exception as e:
 #         return JSONResponse(status_code=500, content={"error": str(e)})
     
+
 
 
 @app.post("/voice-to-text/")
@@ -158,33 +159,24 @@ def text_to_speech(text: str, lang: str, output_path: str ):
     except Exception as e:
         print("Text-to-Speech Error:", str(e))
         return None
-    
+
+class VoiceMessage(BaseModel):
+    file: UploadFile = File(...)
+    source_lang: str
+    target_lang: str 
+
 
 @app.post("/Voice-msg-translate/")
-async def voice_msg_translate(
-    sender: str, 
-    receiver: str, 
-    file: UploadFile = File(...), 
-    sender_lang: str = "en", 
-    receiver_lang: str = "hi"):
+async def voice_msg_translate(data: VoiceMessage):
     try:
-        if not file.filename.endswith(".wav"):
-            raise HTTPException(status_code=400, detail="Only .wav files are supported without ffmpeg.")
+
 
          # Generate unique filename
-        file_extension = file.filename.split(".")[-1]
+        file_extension = VoiceMessage.file.filename.split(".")[-1]
         unique_filename = f"{uuid.uuid4()}.{file_extension}"
 
-        print(f"Unique filename: {unique_filename}")
 
-        # Save to sender folder
-        file_location = f"media/sender/{unique_filename}"
-        with open(file_location, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
-
-        print(f"File saved at: {file_location}")
-
-        
+        file_location = data.audioURL
     
     
         # Convert voice to text
@@ -194,30 +186,22 @@ async def voice_msg_translate(
         print(f"Transcribed text: {text}")
 
         # Translate the text
-        translated_text = translate_message(text, sender_lang, receiver_lang)
+        translated_text = translate_message(text, VoiceMessage.source_lang, VoiceMessage.target_lang)
 
         print(f"Translated text: {translated_text}")
 
         # Convert translated text to speech
-        audio_path = text_to_speech(translated_text, receiver_lang, output_path=f"media/receiver/{uuid.uuid4()}.mp3")
+        audio_path = text_to_speech(translated_text, VoiceMessage.target_lang, output_path=f"media/receiver/{uuid.uuid4()}.mp3")
 
         print(f"Audio path: {audio_path}")
         if not audio_path:
             raise HTTPException(status_code=500, detail="Text-to-Speech conversion failed.")    
-        # Save chat details to the database
-        chat = {
-            "sender": "user",  # Replace with actual sender
-            "receiver": "bot",  # Replace with actual receiver
-            "original_message": text,
-            "translated_message": translated_text,
-            "sender_lang": sender_lang,
-            "receiver_lang": receiver_lang
-        }
-        await collection3.insert_one(chat)
+        
         return {
             "original_text": text,
             "translated_text": translated_text,
             "audio_path": audio_path
         }
+    
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
