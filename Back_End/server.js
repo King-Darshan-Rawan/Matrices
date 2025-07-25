@@ -6,6 +6,12 @@ import cors from "cors";
 import connectDB from "./config/db.js"; 
 
 
+
+import userRoutes from "./routes/userRoute.js";
+import progressRoutes from "./routes/progressRoute.js";
+
+
+
 const PORT = process.env.PORT || 5000;
 
 
@@ -19,6 +25,8 @@ app.use(express.json());
 connectDB(); // Connect to MongoDB
 
 
+app.use('/api/users', userRoutes);
+app.use('/api/progress', progressRoutes);
 
 
 

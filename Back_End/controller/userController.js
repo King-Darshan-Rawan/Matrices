@@ -1,11 +1,12 @@
-import user from '../models/userModels.js';
+import user from '../model/usermodel.js';
+
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import validator from 'validator';
 import dotenv from 'dotenv';
 dotenv.config();
 
-export const registerUser = async (req, res) => {
+const registerUser = async (req, res) => {
     const { name, email, password, role } = req.body;
 
     // Validate input
@@ -46,7 +47,7 @@ export const registerUser = async (req, res) => {
     }
 }
 
-export const loginUser = async (req, res) => {
+const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
     // Validate input
@@ -77,7 +78,7 @@ export const loginUser = async (req, res) => {
     }
 }
 
-export const getUserProfile = async (req, res) => {
+const getUserProfile = async (req, res) => {
     const userId = req.user.id; // Assuming user ID is stored in req.user after authentication
 
     try {
@@ -93,7 +94,7 @@ export const getUserProfile = async (req, res) => {
     }
 }
 
-export const updateUserProfile = async (req, res) => {
+const updateUserProfile = async (req, res) => {
     const userId = req.user.id; // Assuming user ID is stored in req.user after authentication
     const { name, email, role } = req.body;
 

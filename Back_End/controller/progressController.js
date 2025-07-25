@@ -1,7 +1,7 @@
-import Progress from '../model/progressModel.js';
-import express from 'express';
+import Progress from "../model/progressModel.js";
 
-export const getUserProgress = async (req, res) => {
+
+const getUserProgress = async (req, res) => {
     const userId = req.user.id; // Assuming user ID is stored in req.user after authentication
 
     try {
@@ -17,7 +17,7 @@ export const getUserProgress = async (req, res) => {
     }
 }
 
-export const updateUserProgress = async (req, res) => {
+const updateUserProgress = async (req, res) => {
     const userId = req.user.id; // Assuming user ID is stored in req.user after authentication
     const { messagesSent, messagesReceived, mentorsInteracted } = req.body;
 
