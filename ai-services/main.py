@@ -53,7 +53,7 @@ collection3 = db.Try3
 class ChatMessage(BaseModel):
     sender: str
     receiver: str
-    message: str
+    msg: str
     sender_lang: str
     receiver_lang: str
 
@@ -71,7 +71,7 @@ def read_root():
 async def send_message(data: ChatMessage):
     try:
         translated_text = translate_message(
-        text=data.message,
+        text=data.msg,
         from_lang=data.sender_lang,
         to_lang=data.receiver_lang
        )
@@ -79,7 +79,7 @@ async def send_message(data: ChatMessage):
         chat = {
         "sender": data.sender,
         "receiver": data.receiver,
-        "original_message": data.message,
+        "original_message": data.msg,
         "translated_message": translated_text,
         "sender_lang": data.sender_lang,
         "receiver_lang": data.receiver_lang
