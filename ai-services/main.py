@@ -161,7 +161,7 @@ def text_to_speech(text: str, lang: str, output_path: str ):
         return None
 
 class VoiceMessage(BaseModel):
-    file: UploadFile = File(...)
+    file: str
     source_lang: str
     target_lang: str 
 
@@ -172,11 +172,11 @@ async def voice_msg_translate(data: VoiceMessage):
 
 
          # Generate unique filename
-        file_extension = VoiceMessage.file.filename.split(".")[-1]
-        unique_filename = f"{uuid.uuid4()}.{file_extension}"
+        # file_extension = VoiceMessage.file.filename.split(".")[-1]
+        # unique_filename = f"{uuid.uuid4()}.mp3"
 
 
-        file_location = data.audioURL
+        file_location = data.file
     
     
         # Convert voice to text
@@ -186,12 +186,12 @@ async def voice_msg_translate(data: VoiceMessage):
         print(f"Transcribed text: {text}")
 
         # Translate the text
-        translated_text = translate_message(text, VoiceMessage.source_lang, VoiceMessage.target_lang)
+        translated_text = translate_message(text, data.source_lang, data.target_lang)
 
         print(f"Translated text: {translated_text}")
 
         # Convert translated text to speech
-        audio_path = text_to_speech(translated_text, VoiceMessage.target_lang, output_path=f"media/receiver/{uuid.uuid4()}.mp3")
+        audio_path = text_to_speech(translated_text, data.target_lang, output_path=f"media/receiver/{uuid.uuid4()}.mp3")
 
         print(f"Audio path: {audio_path}")
         if not audio_path:
