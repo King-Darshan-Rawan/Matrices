@@ -12,7 +12,8 @@ import whisper
 # from uuid import uuid4
 # import traceback
 import tempfile
-import torchaudio
+
+
 
 from gtts import gTTS
 
@@ -67,23 +68,21 @@ def read_root():
 
 
 
+
+
+
+
+
 @app.post("/send-message/")
 async def send_message(data: ChatMessage):
     try:
-        translated_text = translate_message(
-        text=data.text,
-        from_lang=data.source_lang,
-        to_lang=data.target_lang
-       )
+        print(f"Received message: {data.text} from {data.source_lang} to {data.target_lang}")
 
-        chat = {
-        # "sender": data.sender,
-        # "receiver": data.receiver,
-        "text": data.text,
-        "translatedText": translated_text,
-        "source_lang": data.source_lang,
-        "target_lang": data.target_lang
-        }
+
+        translated_text =translate_message(data.text, data.source_lang, data.target_lang)
+
+        print(f"Translated message: {translated_text}")
+
 
         # await collection2.insert_one(chat)
         return {"translated_message": translated_text}
