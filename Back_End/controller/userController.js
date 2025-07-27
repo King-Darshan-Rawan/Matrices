@@ -50,6 +50,7 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
+
     // Validate input
     if (!email || !password) {
         return res.status(400).json({ message: 'Email and password are required' });
@@ -58,6 +59,9 @@ const loginUser = async (req, res) => {
     try {
         // Find user by email
         const existingUser = await user.findOne({ email });
+
+
+
         if (!existingUser) {
             return res.status(400).json({ message: 'Invalid email or password' });
         }
@@ -68,11 +72,15 @@ const loginUser = async (req, res) => {
             return res.status(400).json({ message: 'Invalid email or password' });
         }
 
+        console.log(isMatch);
+
         // Generate JWT token
         const token = jwt.sign({ id: existingUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
+        console.log(token);
+
         // local storage
-        res.status(200).json({ message: 'Login successful', token, user: existingUser });
+        res.status(200).json({ message: 'Login successful', token, user: existingUser , userId: existingUser._id , role: existingUser.role});
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });

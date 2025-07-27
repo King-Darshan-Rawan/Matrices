@@ -1,16 +1,35 @@
+// src/pages/Login.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
+
 
 function Login({ setUser }) {
-  const [name, setName] = useState('');
-  const [role, setRole] = useState('mentee');
-  const [language, setLanguage] = useState('English');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const { login } = useAuth();
   const navigate = useNavigate();
+  // const { setUser, setToken } = useContext(AuthContext);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setUser({ name, role, language });
-    navigate('/dashboard');
+    try {
+      const res = await axios.post('http://localhost:5000/api/users/login', { email, password });
+      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('userId', res.data.userId);
+      localStorage.setItem('role', res.data.role);
+
+      console.log('1');
+
+      login(res.data.token, res.data.userId , res.data.role);
+
+      console.log('2');
+
+      navigate('/dashboard');
+    } catch (err) {
+      alert(err.response?.data?.message || 'Login failed');
+    }
   };
 
   return (
@@ -19,43 +38,30 @@ function Login({ setUser }) {
         <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">VoiceBridge</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Name</label>
+            <label className="block text-sm font-medium text-gray-700">Email</label>
             <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="mt-1 w-full p-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Role</label>
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
+            <label className="block text-sm font-medium text-gray-700">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className="mt-1 w-full p-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"
-            >
-              <option value="mentee">Mentee</option>
-              <option value="mentor">Mentor</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Language</label>
-            <select
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-              className="mt-1 w-full p-2 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"
-            >
-              <option value="English">English</option>
-              <option value="Hindi">Hindi</option>
-              <option value="Spanish">Spanish</option>
-            </select>
+              required
+            />
           </div>
           <button
             type="submit"
             className="w-full py-2 px-4 bg-orange-500 text-white font-semibold rounded-md hover:bg-orange-600"
           >
-            Start
+            Login
           </button>
         </form>
       </div>

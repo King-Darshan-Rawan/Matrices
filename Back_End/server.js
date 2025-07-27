@@ -11,6 +11,7 @@ const app = express();
 
 import userRoutes from "./routes/userRoute.js";
 import progressRoutes from "./routes/progressRoute.js";
+import requestRoutes from "./routes/requestRoute.js";
 
 const server = http.createServer(app);
 
@@ -41,6 +42,7 @@ connectDB(); // Connect to MongoDB
 
 app.use('/api/users', userRoutes);
 app.use('/api/progress', progressRoutes);
+app.use('/api/requests', requestRoutes);
 
 
 

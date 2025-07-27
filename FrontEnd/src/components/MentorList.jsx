@@ -22,7 +22,7 @@ function MentorList() {
         className="w-full p-2 mb-4 border border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500"
         placeholder="Search by skill..."
       />
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="flex flex-col gap-4">
         {filteredMentors.map((mentor) => (
           <div key={mentor.id} className="p-4 bg-white border border-gray-300 rounded-lg shadow-sm">
             <h2 className="text-lg font-semibold text-gray-800">{mentor.name}</h2>
